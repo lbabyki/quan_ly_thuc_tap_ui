@@ -1,9 +1,11 @@
 using MyWinFormsApp.Business.Models;
 using MyWinFormsApp.Business.Services;
 using MyWinFormsApp.MockData;
+using MyWinFormsApp.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -28,6 +30,8 @@ namespace MyWinFormsApp.Forms
         // Current data
         private List<User> _currentUsers = new List<User>();
         private List<InternshipTopic> _currentTopics = new List<InternshipTopic>();
+        private List<InternshipPeriod> _currentPeriods = new List<InternshipPeriod>();
+        private List<Notification> _currentNotifications = new List<Notification>();
         private List<SystemLog> _currentLogs = new List<SystemLog>();
         private Statistics? _currentStats;
 
@@ -36,43 +40,78 @@ namespace MyWinFormsApp.Forms
 
         public AdminForm()
         {
-            InitializeComponent();
-            _adminService = new AdminService();
+            try
+            {
+                InitializeComponent();
+                _adminService = new AdminService();
 
-            SetupSidebar();
-            SetupColors();
-            SetupDataGridViews();
-            SetupListView();
-            SetupChart();
+                SetupSidebar();
+                SetupColors();
+                SetupDataGridViews();
+                SetupListView();
+                SetupChart();
 
-            // Show Users panel by default
-            ShowPanel(panelUsersContent);
-            _activeMenuButton = btnMenuUsers;
-            SetActiveMenuButton(btnMenuUsers);
+                // Show Users panel by default
+                if (panelUsersContent != null)
+                {
+                    ShowPanel(panelUsersContent);
+                }
 
-            LoadAllData();
+                _activeMenuButton = btnMenuUsers;
+                if (btnMenuUsers != null)
+                {
+                    SetActiveMenuButton(btnMenuUsers);
+                }
+
+                LoadAllData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Lỗi khởi tạo AdminForm: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
         }
 
         private void SetupSidebar()
         {
-            // Setup sidebar panel
-            panelSidebar.BackColor = SIDEBAR_BG;
+            try
+            {
+                // Setup sidebar panel
+                if (panelSidebar != null)
+                {
+                    panelSidebar.BackColor = SIDEBAR_BG;
+                }
 
-            // Setup menu buttons
-            SetupMenuButton(btnMenuUsers, "👥 Quản lý người dùng");
-            SetupMenuButton(btnMenuTopics, "📋 Đề tài thực tập");
-            SetupMenuButton(btnMenuLogs, "📊 Nhật ký hệ thống");
-            SetupMenuButton(btnMenuStats, "📈 Thống kê");
+                // Setup menu buttons
+                if (btnMenuUsers != null) SetupMenuButton(btnMenuUsers, "👥 Quản lý người dùng");
+                if (btnMenuTopics != null) SetupMenuButton(btnMenuTopics, "📋 Đề tài thực tập");
+                if (btnMenuPeriods != null) SetupMenuButton(btnMenuPeriods, "📅 Quản lý kỳ thực tập");
+                if (btnMenuNotifications != null) SetupMenuButton(btnMenuNotifications, "🔔 Thông báo");
+                if (btnMenuLogs != null) SetupMenuButton(btnMenuLogs, "📊 Nhật ký hệ thống");
+                if (btnMenuStats != null) SetupMenuButton(btnMenuStats, "📈 Thống kê");
 
-            // Add click events
-            btnMenuUsers.Click += (s, e) => { ShowPanel(panelUsersContent); SetActiveMenuButton(btnMenuUsers); };
-            btnMenuTopics.Click += (s, e) => { ShowPanel(panelTopicsContent); SetActiveMenuButton(btnMenuTopics); };
-            btnMenuLogs.Click += (s, e) => { ShowPanel(panelLogsContent); SetActiveMenuButton(btnMenuLogs); };
-            btnMenuStats.Click += (s, e) => { ShowPanel(panelStatsContent); SetActiveMenuButton(btnMenuStats); };
+                // Add click events
+                if (btnMenuUsers != null) btnMenuUsers.Click += (s, e) => { ShowPanel(panelUsersContent); SetActiveMenuButton(btnMenuUsers); };
+                if (btnMenuTopics != null) btnMenuTopics.Click += (s, e) => { ShowPanel(panelTopicsContent); SetActiveMenuButton(btnMenuTopics); };
+                if (btnMenuPeriods != null) btnMenuPeriods.Click += (s, e) => { ShowPanel(panelPeriodsContent); SetActiveMenuButton(btnMenuPeriods); };
+                if (btnMenuNotifications != null) btnMenuNotifications.Click += (s, e) => { ShowPanel(panelNotificationsContent); SetActiveMenuButton(btnMenuNotifications); };
+                if (btnMenuLogs != null) btnMenuLogs.Click += (s, e) => { ShowPanel(panelLogsContent); SetActiveMenuButton(btnMenuLogs); };
+                if (btnMenuStats != null) btnMenuStats.Click += (s, e) => { ShowPanel(panelStatsContent); SetActiveMenuButton(btnMenuStats); };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi SetupSidebar: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void SetupMenuButton(Button btn, string text)
+        private void SetupMenuButton(Button? btn, string text)
         {
+            if (btn == null) return;
+
             btn.Text = text;
             btn.BackColor = SIDEBAR_BG;
             btn.ForeColor = Color.White;
@@ -114,6 +153,8 @@ namespace MyWinFormsApp.Forms
             // Hide all content panels
             panelUsersContent.Visible = false;
             panelTopicsContent.Visible = false;
+            panelPeriodsContent.Visible = false;
+            panelNotificationsContent.Visible = false;
             panelLogsContent.Visible = false;
             panelStatsContent.Visible = false;
 
@@ -243,6 +284,8 @@ namespace MyWinFormsApp.Forms
         {
             await LoadUsers();
             await LoadTopics();
+            await LoadPeriods();
+            await LoadNotifications();
             await LoadLogs();
             await LoadStatistics();
         }
@@ -255,8 +298,10 @@ namespace MyWinFormsApp.Forms
             {
                 if (_useMockData)
                 {
-                    _currentUsers = AdminMockData.GetAllUsers();
-                    UpdateUserDataGridViews();
+                    // Load from specific mock data sources
+                    dgvStudents.DataSource = StudentMockData.GetAllStudents();
+                    dgvLecturers.DataSource = LecturerMockData.GetAllLecturers();
+                    dgvCompanies.DataSource = CompanyMockData.GetAllCompanies();
                 }
                 else
                 {
@@ -297,10 +342,49 @@ namespace MyWinFormsApp.Forms
             {
                 try
                 {
-                    // TODO: Call API to create user - need to implement proper mapping
-                    MessageBox.Show("Chức năng tạo người dùng đang được phát triển!", "Thông báo",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // await LoadUsersAsync(); // Reload data
+                    if (_useMockData)
+                    {
+                        // Use mock data
+                        bool success = false;
+                        string message = "";
+
+                        if (role == "student" && dialog.UserData is Student student)
+                        {
+                            var (s, m, _) = StudentMockData.CreateStudent(student);
+                            success = s;
+                            message = m;
+                        }
+                        else if (role == "lecturer" && dialog.UserData is Lecturer lecturer)
+                        {
+                            var (s, m, _) = LecturerMockData.CreateLecturer(lecturer);
+                            success = s;
+                            message = m;
+                        }
+                        else if (role == "company" && dialog.UserData is Company company)
+                        {
+                            var (s, m, _) = CompanyMockData.CreateCompany(company);
+                            success = s;
+                            message = m;
+                        }
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadUsers();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call real API
+                        MessageBox.Show("Chức năng tạo người dùng qua API đang được phát triển!", "Thông báo",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -347,10 +431,62 @@ namespace MyWinFormsApp.Forms
             {
                 try
                 {
-                    // TODO: Call API to update user - need to implement proper mapping
-                    MessageBox.Show("Chức năng sửa người dùng đang được phát triển!", "Thông báo",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // await LoadUsersAsync(); // Reload data
+                    if (_useMockData)
+                    {
+                        // Use mock data
+                        bool success = false;
+                        string message = "";
+                        string? userId = null;
+
+                        if (role == "student" && dialog.UserData is Student student)
+                        {
+                            userId = student.Id;
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                var (s, m, _) = StudentMockData.UpdateStudent(userId, student);
+                                success = s;
+                                message = m;
+                            }
+                        }
+                        else if (role == "lecturer" && dialog.UserData is Lecturer lecturer)
+                        {
+                            userId = lecturer.Id;
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                var (s, m, _) = LecturerMockData.UpdateLecturer(userId, lecturer);
+                                success = s;
+                                message = m;
+                            }
+                        }
+                        else if (role == "company" && dialog.UserData is Company company)
+                        {
+                            userId = company.Id;
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                var (s, m, _) = CompanyMockData.UpdateCompany(userId, company);
+                                success = s;
+                                message = m;
+                            }
+                        }
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadUsers();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message ?? "Không tìm thấy ID người dùng", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call real API
+                        MessageBox.Show("Chức năng sửa người dùng qua API đang được phát triển!", "Thông báo",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -366,10 +502,12 @@ namespace MyWinFormsApp.Forms
             DataGridView? currentDgv = null;
             string? userId = null;
             string? userName = null;
+            string role = "student";
 
             if (currentTab == tabStudents)
             {
                 currentDgv = dgvStudents;
+                role = "student";
                 if (currentDgv.SelectedRows.Count > 0)
                 {
                     var student = currentDgv.SelectedRows[0].DataBoundItem as Student;
@@ -380,6 +518,7 @@ namespace MyWinFormsApp.Forms
             else if (currentTab == tabLecturers)
             {
                 currentDgv = dgvLecturers;
+                role = "lecturer";
                 if (currentDgv.SelectedRows.Count > 0)
                 {
                     var lecturer = currentDgv.SelectedRows[0].DataBoundItem as Lecturer;
@@ -390,6 +529,7 @@ namespace MyWinFormsApp.Forms
             else if (currentTab == tabCompanies)
             {
                 currentDgv = dgvCompanies;
+                role = "company";
                 if (currentDgv.SelectedRows.Count > 0)
                 {
                     var company = currentDgv.SelectedRows[0].DataBoundItem as Company;
@@ -419,18 +559,58 @@ namespace MyWinFormsApp.Forms
             {
                 try
                 {
-                    var (success, message) = await _adminService.DeleteUserAsync(userId);
-
-                    if (success)
+                    if (_useMockData)
                     {
-                        MessageBox.Show(message, "Thành công",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        await LoadUsers(); // Reload data
+                        // Use mock data
+                        bool success = false;
+                        string message = "";
+
+                        if (role == "student")
+                        {
+                            var (s, m) = StudentMockData.DeleteStudent(userId);
+                            success = s;
+                            message = m;
+                        }
+                        else if (role == "lecturer")
+                        {
+                            var (s, m) = LecturerMockData.DeleteLecturer(userId);
+                            success = s;
+                            message = m;
+                        }
+                        else if (role == "company")
+                        {
+                            var (s, m) = CompanyMockData.DeleteCompany(userId);
+                            success = s;
+                            message = m;
+                        }
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadUsers();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show(message, "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        var (success, message) = await _adminService.DeleteUserAsync(userId);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadUsers(); // Reload data
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -438,41 +618,6 @@ namespace MyWinFormsApp.Forms
                     MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
-        }
-
-        private async void resetPasswordToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var currentTab = tabControl1.SelectedTab;
-            DataGridView? currentDgv = null;
-
-            if (currentTab == tabStudents) currentDgv = dgvStudents;
-            else if (currentTab == tabLecturers) currentDgv = dgvLecturers;
-            else if (currentTab == tabCompanies) currentDgv = dgvCompanies;
-
-            if (currentDgv == null || currentDgv.SelectedRows.Count == 0) return;
-
-            var user = currentDgv.SelectedRows[0].DataBoundItem as User;
-            if (user == null) return;
-
-            try
-            {
-                if (_useMockData)
-                {
-                    var (success, message) = AdminMockData.ResetPassword(user.UserId ?? "");
-                    MessageBox.Show(message, success ? "Thành công" : "Lỗi",
-                        MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-                }
-                else
-                {
-                    var (success, message) = await _adminService.ResetPasswordAsync(user.UserId ?? "");
-                    MessageBox.Show(message, success ? "Thành công" : "Lỗi",
-                        MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -519,19 +664,39 @@ namespace MyWinFormsApp.Forms
             {
                 try
                 {
-                    // Call API to create topic
-                    var (success, message, topic) = await _adminService.CreateTopicAsync(dialog.TopicData!);
-
-                    if (success)
+                    if (_useMockData)
                     {
-                        MessageBox.Show(message, "Thành công",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        await LoadTopics(); // Reload data
+                        // Use mock data
+                        var (success, message, topic) = AdminMockData.CreateTopic(dialog.TopicData!);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadTopics();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show(message, "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // Call API to create topic
+                        var (success, message, topic) = await _adminService.CreateTopicAsync(dialog.TopicData!);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadTopics(); // Reload data
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -566,19 +731,39 @@ namespace MyWinFormsApp.Forms
                         return;
                     }
 
-                    // Call API to update topic
-                    var (success, message, topic) = await _adminService.UpdateTopicAsync(selectedTopic.Id, dialog.TopicData!);
-
-                    if (success)
+                    if (_useMockData)
                     {
-                        MessageBox.Show(message, "Thành công",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        await LoadTopics(); // Reload data
+                        // Use mock data
+                        var (success, message, topic) = AdminMockData.UpdateTopic(selectedTopic.Id, dialog.TopicData!);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadTopics();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show(message, "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // Call API to update topic
+                        var (success, message, topic) = await _adminService.UpdateTopicAsync(selectedTopic.Id, dialog.TopicData!);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadTopics(); // Reload data
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -711,7 +896,7 @@ namespace MyWinFormsApp.Forms
             {
                 if (_useMockData)
                 {
-                    _currentLogs = AdminMockData.GetSystemLogs(100);
+                    _currentLogs = SystemLogMockData.GetAllLogs();
                     UpdateLogsListView();
                 }
                 else
@@ -852,6 +1037,764 @@ namespace MyWinFormsApp.Forms
         }
 
         #endregion
+
+        #region Internship Period Management
+
+        private async System.Threading.Tasks.Task LoadPeriods()
+        {
+            try
+            {
+                if (_useMockData)
+                {
+                    _currentPeriods = InternshipPeriodMockData.GetAllPeriods();
+                    dgvPeriods.DataSource = _currentPeriods;
+                }
+                else
+                {
+                    // TODO: Call API when available
+                    MessageBox.Show("API chưa có sẵn", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách kỳ thực tập: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnCreatePeriod_Click(object sender, EventArgs e)
+        {
+            var dialog = new MyWinFormsApp.UI.Forms.InternshipPeriodDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (_useMockData)
+                    {
+                        var (success, message, period) = InternshipPeriodMockData.CreatePeriod(dialog.PeriodData!);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadPeriods();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call API
+                        MessageBox.Show("API chưa có sẵn", "Thông báo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void btnEditPeriod_Click(object sender, EventArgs e)
+        {
+            if (dgvPeriods.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn kỳ thực tập cần sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedPeriod = dgvPeriods.SelectedRows[0].DataBoundItem as InternshipPeriod;
+            if (selectedPeriod == null) return;
+
+            var dialog = new MyWinFormsApp.UI.Forms.InternshipPeriodDialog(selectedPeriod);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(selectedPeriod.Id))
+                    {
+                        MessageBox.Show("Không tìm thấy ID kỳ thực tập!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (_useMockData)
+                    {
+                        var (success, message, period) = InternshipPeriodMockData.UpdatePeriod(selectedPeriod.Id, dialog.PeriodData!);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadPeriods();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call API
+                        MessageBox.Show("API chưa có sẵn", "Thông báo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void btnDeletePeriod_Click(object sender, EventArgs e)
+        {
+            if (dgvPeriods.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn kỳ thực tập cần xóa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedPeriod = dgvPeriods.SelectedRows[0].DataBoundItem as InternshipPeriod;
+            if (selectedPeriod == null) return;
+
+            var confirmResult = MessageBox.Show(
+                $"Bạn có chắc chắn muốn xóa kỳ thực tập '{selectedPeriod.Name}'?",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(selectedPeriod.Id))
+                    {
+                        MessageBox.Show("Không tìm thấy ID kỳ thực tập!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (_useMockData)
+                    {
+                        var (success, message) = InternshipPeriodMockData.DeletePeriod(selectedPeriod.Id);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadPeriods();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call API
+                        MessageBox.Show("API chưa có sẵn", "Thông báo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void btnOpenPeriod_Click(object sender, EventArgs e)
+        {
+            if (dgvPeriods.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn kỳ thực tập cần mở!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedPeriod = dgvPeriods.SelectedRows[0].DataBoundItem as InternshipPeriod;
+            if (selectedPeriod == null || string.IsNullOrEmpty(selectedPeriod.Id)) return;
+
+            try
+            {
+                if (_useMockData)
+                {
+                    var (success, message, period) = InternshipPeriodMockData.OpenPeriod(selectedPeriod.Id);
+
+                    if (success)
+                    {
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LoadPeriods();
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    // TODO: Call API
+                    MessageBox.Show("API chưa có sẵn", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnClosePeriod_Click(object sender, EventArgs e)
+        {
+            if (dgvPeriods.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn kỳ thực tập cần đóng!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedPeriod = dgvPeriods.SelectedRows[0].DataBoundItem as InternshipPeriod;
+            if (selectedPeriod == null || string.IsNullOrEmpty(selectedPeriod.Id)) return;
+
+            try
+            {
+                if (_useMockData)
+                {
+                    var (success, message, period) = InternshipPeriodMockData.ClosePeriod(selectedPeriod.Id);
+
+                    if (success)
+                    {
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LoadPeriods();
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    // TODO: Call API
+                    MessageBox.Show("API chưa có sẵn", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
+
+        #region Notification Management
+
+        private async System.Threading.Tasks.Task LoadNotifications()
+        {
+            try
+            {
+                if (_useMockData)
+                {
+                    _currentNotifications = NotificationMockData.GetAllNotifications();
+                    dgvNotifications.DataSource = _currentNotifications;
+                }
+                else
+                {
+                    // TODO: Call API when available
+                    MessageBox.Show("API chưa có sẵn", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách thông báo: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnCreateNotification_Click(object sender, EventArgs e)
+        {
+            // Simple dialog for creating notification
+            var title = Microsoft.VisualBasic.Interaction.InputBox("Nhập tiêu đề thông báo:", "Tạo thông báo", "");
+            if (string.IsNullOrWhiteSpace(title)) return;
+
+            var content = Microsoft.VisualBasic.Interaction.InputBox("Nhập nội dung thông báo:", "Tạo thông báo", "");
+            if (string.IsNullOrWhiteSpace(content)) return;
+
+            try
+            {
+                var notification = new Notification
+                {
+                    Title = title,
+                    Content = content,
+                    Type = "info",
+                    TargetType = "all",
+                    SenderId = "admin1",
+                    SenderName = "Admin",
+                    TotalRecipients = 100 // Mock value
+                };
+
+                if (_useMockData)
+                {
+                    var (success, message, notif) = NotificationMockData.CreateNotification(notification);
+
+                    if (success)
+                    {
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LoadNotifications();
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    // TODO: Call API
+                    MessageBox.Show("API chưa có sẵn", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnSendNotification_Click(object sender, EventArgs e)
+        {
+            if (dgvNotifications.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn thông báo cần gửi!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedNotif = dgvNotifications.SelectedRows[0].DataBoundItem as Notification;
+            if (selectedNotif == null || string.IsNullOrEmpty(selectedNotif.Id)) return;
+
+            var confirmResult = MessageBox.Show(
+                $"Bạn có chắc chắn muốn gửi thông báo '{selectedNotif.Title}'?",
+                "Xác nhận gửi",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                try
+                {
+                    if (_useMockData)
+                    {
+                        var (success, message, notif) = NotificationMockData.SendNotification(selectedNotif.Id);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadNotifications();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call API
+                        MessageBox.Show("API chưa có sẵn", "Thông báo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void btnDeleteNotification_Click(object sender, EventArgs e)
+        {
+            if (dgvNotifications.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn thông báo cần xóa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedNotif = dgvNotifications.SelectedRows[0].DataBoundItem as Notification;
+            if (selectedNotif == null || string.IsNullOrEmpty(selectedNotif.Id)) return;
+
+            var confirmResult = MessageBox.Show(
+                $"Bạn có chắc chắn muốn xóa thông báo '{selectedNotif.Title}'?",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                try
+                {
+                    if (_useMockData)
+                    {
+                        var (success, message) = NotificationMockData.DeleteNotification(selectedNotif.Id);
+
+                        if (success)
+                        {
+                            MessageBox.Show(message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadNotifications();
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call API
+                        MessageBox.Show("API chưa có sẵn", "Thông báo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Reset Password
+
+        private void resetPasswordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Get current tab to determine user type
+            string userType = "";
+            string userId = "";
+            string userName = "";
+
+            if (tabControlUsers.SelectedTab == tabStudents && dgvStudents.SelectedRows.Count > 0)
+            {
+                var student = dgvStudents.SelectedRows[0].DataBoundItem as Student;
+                if (student != null)
+                {
+                    userType = "student";
+                    userId = student.Id ?? "";
+                    userName = student.FullName ?? "";
+                }
+            }
+            else if (tabControlUsers.SelectedTab == tabLecturers && dgvLecturers.SelectedRows.Count > 0)
+            {
+                var lecturer = dgvLecturers.SelectedRows[0].DataBoundItem as Lecturer;
+                if (lecturer != null)
+                {
+                    userType = "lecturer";
+                    userId = lecturer.Id ?? "";
+                    userName = lecturer.FullName ?? "";
+                }
+            }
+            else if (tabControlUsers.SelectedTab == tabCompanies && dgvCompanies.SelectedRows.Count > 0)
+            {
+                var company = dgvCompanies.SelectedRows[0].DataBoundItem as Company;
+                if (company != null)
+                {
+                    userType = "company";
+                    userId = company.Id ?? "";
+                    userName = company.CompanyName ?? "";
+                }
+            }
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                MessageBox.Show("Vui lòng chọn người dùng cần reset mật khẩu!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var confirmResult = MessageBox.Show(
+                $"Bạn có chắc chắn muốn reset mật khẩu cho '{userName}'?\nMật khẩu mới sẽ là: 123456",
+                "Xác nhận reset mật khẩu",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                try
+                {
+                    if (_useMockData)
+                    {
+                        (bool success, string message) result = (false, "");
+
+                        switch (userType)
+                        {
+                            case "student":
+                                result = StudentMockData.ResetPassword(userId);
+                                break;
+                            case "lecturer":
+                                result = LecturerMockData.ResetPassword(userId);
+                                break;
+                            case "company":
+                                result = CompanyMockData.ResetPassword(userId);
+                                break;
+                        }
+
+                        if (result.success)
+                        {
+                            MessageBox.Show(result.message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show(result.message, "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: Call API
+                        MessageBox.Show("API chưa có sẵn", "Thông báo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Excel Export
+
+        private void btnExportUsers_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Determine which tab is active
+                string userType = "";
+                List<Student> students = new List<Student>();
+                List<Lecturer> lecturers = new List<Lecturer>();
+                List<Company> companies = new List<Company>();
+
+                if (tabControlUsers.SelectedTab == tabStudents)
+                {
+                    userType = "Students";
+                    students = StudentMockData.GetAllStudents();
+                }
+                else if (tabControlUsers.SelectedTab == tabLecturers)
+                {
+                    userType = "Lecturers";
+                    lecturers = LecturerMockData.GetAllLecturers();
+                }
+                else if (tabControlUsers.SelectedTab == tabCompanies)
+                {
+                    userType = "Companies";
+                    companies = CompanyMockData.GetAllCompanies();
+                }
+
+                if (string.IsNullOrEmpty(userType))
+                {
+                    MessageBox.Show("Vui lòng chọn tab để xuất dữ liệu", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Show save file dialog
+                using (var saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "Excel Files|*.xlsx";
+                    saveFileDialog.Title = "Xuất danh sách ra Excel";
+                    saveFileDialog.FileName = $"DanhSach_{userType}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Export based on user type
+                        if (userType == "Students")
+                        {
+                            ExcelExportService.ExportStudents(students, saveFileDialog.FileName);
+                        }
+                        else if (userType == "Lecturers")
+                        {
+                            ExcelExportService.ExportLecturers(lecturers, saveFileDialog.FileName);
+                        }
+                        else if (userType == "Companies")
+                        {
+                            ExcelExportService.ExportCompanies(companies, saveFileDialog.FileName);
+                        }
+
+                        MessageBox.Show($"Xuất file thành công!\n{saveFileDialog.FileName}",
+                            "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // Ask if user wants to open the file
+                        if (MessageBox.Show("Bạn có muốn mở file Excel không?", "Xác nhận",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = saveFileDialog.FileName,
+                                UseShellExecute = true
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xuất file: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnExportTopics_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var topics = _currentTopics;
+                if (topics == null || topics.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu để xuất", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using (var saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "Excel Files|*.xlsx";
+                    saveFileDialog.Title = "Xuất danh sách đề tài ra Excel";
+                    saveFileDialog.FileName = $"DanhSachDeTai_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        ExcelExportService.ExportTopics(topics, saveFileDialog.FileName);
+
+                        MessageBox.Show($"Xuất file thành công!\n{saveFileDialog.FileName}",
+                            "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        if (MessageBox.Show("Bạn có muốn mở file Excel không?", "Xác nhận",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = saveFileDialog.FileName,
+                                UseShellExecute = true
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xuất file: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnExportPeriods_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var periods = _currentPeriods;
+                if (periods == null || periods.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu để xuất", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using (var saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "Excel Files|*.xlsx";
+                    saveFileDialog.Title = "Xuất danh sách kỳ thực tập ra Excel";
+                    saveFileDialog.FileName = $"DanhSachKyThucTap_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        ExcelExportService.ExportPeriods(periods, saveFileDialog.FileName);
+
+                        MessageBox.Show($"Xuất file thành công!\n{saveFileDialog.FileName}",
+                            "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        if (MessageBox.Show("Bạn có muốn mở file Excel không?", "Xác nhận",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = saveFileDialog.FileName,
+                                UseShellExecute = true
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xuất file: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnExportLogs_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var logs = _currentLogs;
+                if (logs == null || logs.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu để xuất", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using (var saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "Excel Files|*.xlsx";
+                    saveFileDialog.Title = "Xuất nhật ký hệ thống ra Excel";
+                    saveFileDialog.FileName = $"NhatKyHeThong_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        ExcelExportService.ExportSystemLogs(logs, saveFileDialog.FileName);
+
+                        MessageBox.Show($"Xuất file thành công!\n{saveFileDialog.FileName}",
+                            "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        if (MessageBox.Show("Bạn có muốn mở file Excel không?", "Xác nhận",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = saveFileDialog.FileName,
+                                UseShellExecute = true
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xuất file: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
     }
 }
-

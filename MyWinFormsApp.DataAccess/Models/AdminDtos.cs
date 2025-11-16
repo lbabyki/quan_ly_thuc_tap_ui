@@ -4,6 +4,61 @@ using System.Collections.Generic;
 
 namespace MyWinFormsApp.DataAccess.Models
 {
+    // DTO cho Internship Period
+    public class InternshipPeriodDto
+    {
+        [JsonProperty("_id")]
+        public string? Id { get; set; }
+
+        [JsonProperty("name")]
+        public string? Name { get; set; }
+
+        [JsonProperty("description")]
+        public string? Description { get; set; }
+
+        [JsonProperty("semester")]
+        public int Semester { get; set; }
+
+        [JsonProperty("academicYear")]
+        public string? AcademicYear { get; set; }
+
+        [JsonProperty("startDate")]
+        public DateTime? StartDate { get; set; }
+
+        [JsonProperty("endDate")]
+        public DateTime? EndDate { get; set; }
+
+        [JsonProperty("registrationDeadline")]
+        public DateTime? RegistrationDeadline { get; set; }
+
+        [JsonProperty("reportDeadline")]
+        public DateTime? ReportDeadline { get; set; }
+
+        [JsonProperty("defenseDate")]
+        public DateTime? DefenseDate { get; set; }
+
+        [JsonProperty("status")]
+        public string? Status { get; set; }
+
+        [JsonProperty("registeredStudents")]
+        public int RegisteredStudents { get; set; }
+
+        [JsonProperty("totalTopics")]
+        public int TotalTopics { get; set; }
+
+        [JsonProperty("notes")]
+        public string? Notes { get; set; }
+
+        [JsonProperty("createdBy")]
+        public string? CreatedBy { get; set; }
+
+        [JsonProperty("createdAt")]
+        public DateTime? CreatedAt { get; set; }
+
+        [JsonProperty("updatedAt")]
+        public DateTime? UpdatedAt { get; set; }
+    }
+
     // DTO cho System Log
     public class SystemLogDto
     {

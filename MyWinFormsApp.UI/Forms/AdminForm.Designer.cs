@@ -25,6 +25,8 @@ namespace MyWinFormsApp.Forms
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.btnMenuUsers = new System.Windows.Forms.Button();
             this.btnMenuTopics = new System.Windows.Forms.Button();
+            this.btnMenuPeriods = new System.Windows.Forms.Button();
+            this.btnMenuNotifications = new System.Windows.Forms.Button();
             this.btnMenuLogs = new System.Windows.Forms.Button();
             this.btnMenuStats = new System.Windows.Forms.Button();
             this.lblAppTitle = new System.Windows.Forms.Label();
@@ -32,6 +34,8 @@ namespace MyWinFormsApp.Forms
             // Content panels
             this.panelUsersContent = new System.Windows.Forms.Panel();
             this.panelTopicsContent = new System.Windows.Forms.Panel();
+            this.panelPeriodsContent = new System.Windows.Forms.Panel();
+            this.panelNotificationsContent = new System.Windows.Forms.Panel();
             this.panelLogsContent = new System.Windows.Forms.Panel();
             this.panelStatsContent = new System.Windows.Forms.Panel();
 
@@ -46,15 +50,28 @@ namespace MyWinFormsApp.Forms
             this.dgvLecturers = new System.Windows.Forms.DataGridView();
             this.dgvCompanies = new System.Windows.Forms.DataGridView();
             this.dgvTopics = new System.Windows.Forms.DataGridView();
-            
+            this.dgvPeriods = new System.Windows.Forms.DataGridView();
+
             // Buttons
             this.btnCreateUser = new System.Windows.Forms.Button();
             this.btnEditUser = new System.Windows.Forms.Button();
             this.btnDeleteUser = new System.Windows.Forms.Button();
+            this.btnExportUsers = new System.Windows.Forms.Button();
             this.btnCreateTopic = new System.Windows.Forms.Button();
             this.btnEditTopic = new System.Windows.Forms.Button();
             this.btnApproveTopic = new System.Windows.Forms.Button();
             this.btnRejectTopic = new System.Windows.Forms.Button();
+            this.btnExportTopics = new System.Windows.Forms.Button();
+            this.btnCreatePeriod = new System.Windows.Forms.Button();
+            this.btnEditPeriod = new System.Windows.Forms.Button();
+            this.btnDeletePeriod = new System.Windows.Forms.Button();
+            this.btnOpenPeriod = new System.Windows.Forms.Button();
+            this.btnClosePeriod = new System.Windows.Forms.Button();
+            this.btnExportPeriods = new System.Windows.Forms.Button();
+            this.btnCreateNotification = new System.Windows.Forms.Button();
+            this.btnSendNotification = new System.Windows.Forms.Button();
+            this.btnDeleteNotification = new System.Windows.Forms.Button();
+            this.btnExportLogs = new System.Windows.Forms.Button();
             
             // ComboBox
             this.cboTopicStatus = new System.Windows.Forms.ComboBox();
@@ -83,6 +100,12 @@ namespace MyWinFormsApp.Forms
             this.panelUserButtons = new System.Windows.Forms.Panel();
             this.panelTopicControls = new System.Windows.Forms.Panel();
             this.panelStatsInfo = new System.Windows.Forms.Panel();
+            this.panelPeriodControls = new System.Windows.Forms.Panel();
+            this.panelNotificationControls = new System.Windows.Forms.Panel();
+            this.panelLogControls = new System.Windows.Forms.Panel();
+
+            // DataGridView for notifications
+            this.dgvNotifications = new System.Windows.Forms.DataGridView();
 
             this.panelSidebar.SuspendLayout();
             this.panelUsersContent.SuspendLayout();
@@ -111,6 +134,8 @@ namespace MyWinFormsApp.Forms
             this.panelSidebar.BackColor = System.Drawing.Color.FromArgb(30, 58, 95);
             this.panelSidebar.Controls.Add(this.btnMenuStats);
             this.panelSidebar.Controls.Add(this.btnMenuLogs);
+            this.panelSidebar.Controls.Add(this.btnMenuNotifications);
+            this.panelSidebar.Controls.Add(this.btnMenuPeriods);
             this.panelSidebar.Controls.Add(this.btnMenuTopics);
             this.panelSidebar.Controls.Add(this.btnMenuUsers);
             this.panelSidebar.Controls.Add(this.lblAppTitle);
@@ -167,6 +192,38 @@ namespace MyWinFormsApp.Forms
             this.btnMenuTopics.UseVisualStyleBackColor = true;
 
             //
+            // btnMenuPeriods
+            //
+            this.btnMenuPeriods.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnMenuPeriods.FlatAppearance.BorderSize = 0;
+            this.btnMenuPeriods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMenuPeriods.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnMenuPeriods.ForeColor = System.Drawing.Color.White;
+            this.btnMenuPeriods.Location = new System.Drawing.Point(0, 200);
+            this.btnMenuPeriods.Name = "btnMenuPeriods";
+            this.btnMenuPeriods.Size = new System.Drawing.Size(250, 60);
+            this.btnMenuPeriods.TabIndex = 3;
+            this.btnMenuPeriods.Text = "📅 Quản lý kỳ thực tập";
+            this.btnMenuPeriods.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMenuPeriods.UseVisualStyleBackColor = true;
+
+            //
+            // btnMenuNotifications
+            //
+            this.btnMenuNotifications.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnMenuNotifications.FlatAppearance.BorderSize = 0;
+            this.btnMenuNotifications.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMenuNotifications.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnMenuNotifications.ForeColor = System.Drawing.Color.White;
+            this.btnMenuNotifications.Location = new System.Drawing.Point(0, 260);
+            this.btnMenuNotifications.Name = "btnMenuNotifications";
+            this.btnMenuNotifications.Size = new System.Drawing.Size(250, 60);
+            this.btnMenuNotifications.TabIndex = 4;
+            this.btnMenuNotifications.Text = "🔔 Thông báo";
+            this.btnMenuNotifications.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMenuNotifications.UseVisualStyleBackColor = true;
+
+            //
             // btnMenuLogs
             //
             this.btnMenuLogs.Dock = System.Windows.Forms.DockStyle.Top;
@@ -174,10 +231,10 @@ namespace MyWinFormsApp.Forms
             this.btnMenuLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMenuLogs.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.btnMenuLogs.ForeColor = System.Drawing.Color.White;
-            this.btnMenuLogs.Location = new System.Drawing.Point(0, 200);
+            this.btnMenuLogs.Location = new System.Drawing.Point(0, 320);
             this.btnMenuLogs.Name = "btnMenuLogs";
             this.btnMenuLogs.Size = new System.Drawing.Size(250, 60);
-            this.btnMenuLogs.TabIndex = 3;
+            this.btnMenuLogs.TabIndex = 5;
             this.btnMenuLogs.Text = "📊 Nhật ký hệ thống";
             this.btnMenuLogs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnMenuLogs.UseVisualStyleBackColor = true;
@@ -190,10 +247,10 @@ namespace MyWinFormsApp.Forms
             this.btnMenuStats.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMenuStats.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.btnMenuStats.ForeColor = System.Drawing.Color.White;
-            this.btnMenuStats.Location = new System.Drawing.Point(0, 260);
+            this.btnMenuStats.Location = new System.Drawing.Point(0, 380);
             this.btnMenuStats.Name = "btnMenuStats";
             this.btnMenuStats.Size = new System.Drawing.Size(250, 60);
-            this.btnMenuStats.TabIndex = 4;
+            this.btnMenuStats.TabIndex = 6;
             this.btnMenuStats.Text = "📈 Thống kê";
             this.btnMenuStats.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnMenuStats.UseVisualStyleBackColor = true;
@@ -216,6 +273,7 @@ namespace MyWinFormsApp.Forms
             // panelUserButtons
             //
             this.panelUserButtons.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelUserButtons.Controls.Add(this.btnExportUsers);
             this.panelUserButtons.Controls.Add(this.btnCreateUser);
             this.panelUserButtons.Controls.Add(this.btnEditUser);
             this.panelUserButtons.Controls.Add(this.btnDeleteUser);
@@ -258,6 +316,19 @@ namespace MyWinFormsApp.Forms
             this.btnDeleteUser.Text = "Xóa";
             this.btnDeleteUser.UseVisualStyleBackColor = true;
             this.btnDeleteUser.Click += new System.EventHandler(this.btnDeleteUser_Click);
+
+            //
+            // btnExportUsers
+            //
+            this.btnExportUsers.BackColor = System.Drawing.Color.FromArgb(46, 125, 50);
+            this.btnExportUsers.ForeColor = System.Drawing.Color.White;
+            this.btnExportUsers.Location = new System.Drawing.Point(1030, 10);
+            this.btnExportUsers.Name = "btnExportUsers";
+            this.btnExportUsers.Size = new System.Drawing.Size(140, 35);
+            this.btnExportUsers.TabIndex = 3;
+            this.btnExportUsers.Text = "📊 Xuất Excel";
+            this.btnExportUsers.UseVisualStyleBackColor = false;
+            this.btnExportUsers.Click += new System.EventHandler(this.btnExportUsers_Click);
 
             //
             // tabControlUsers
@@ -376,6 +447,7 @@ namespace MyWinFormsApp.Forms
             // panelTopicControls
             //
             this.panelTopicControls.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelTopicControls.Controls.Add(this.btnExportTopics);
             this.panelTopicControls.Controls.Add(this.cboTopicStatus);
             this.panelTopicControls.Controls.Add(this.btnCreateTopic);
             this.panelTopicControls.Controls.Add(this.btnEditTopic);
@@ -452,6 +524,19 @@ namespace MyWinFormsApp.Forms
             this.btnRejectTopic.Click += new System.EventHandler(this.btnRejectTopic_Click);
 
             //
+            // btnExportTopics
+            //
+            this.btnExportTopics.BackColor = System.Drawing.Color.FromArgb(46, 125, 50);
+            this.btnExportTopics.ForeColor = System.Drawing.Color.White;
+            this.btnExportTopics.Location = new System.Drawing.Point(780, 10);
+            this.btnExportTopics.Name = "btnExportTopics";
+            this.btnExportTopics.Size = new System.Drawing.Size(140, 35);
+            this.btnExportTopics.TabIndex = 5;
+            this.btnExportTopics.Text = "📊 Xuất Excel";
+            this.btnExportTopics.UseVisualStyleBackColor = false;
+            this.btnExportTopics.Click += new System.EventHandler(this.btnExportTopics_Click);
+
+            //
             // dgvTopics
             //
             this.dgvTopics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -462,17 +547,223 @@ namespace MyWinFormsApp.Forms
             this.dgvTopics.TabIndex = 1;
 
             //
+            // panelPeriodsContent
+            //
+            this.panelPeriodsContent.BackColor = System.Drawing.Color.White;
+            this.panelPeriodsContent.Controls.Add(this.dgvPeriods);
+            this.panelPeriodsContent.Controls.Add(this.panelPeriodControls);
+            this.panelPeriodsContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelPeriodsContent.Location = new System.Drawing.Point(250, 0);
+            this.panelPeriodsContent.Name = "panelPeriodsContent";
+            this.panelPeriodsContent.Padding = new System.Windows.Forms.Padding(10);
+            this.panelPeriodsContent.Size = new System.Drawing.Size(950, 700);
+            this.panelPeriodsContent.TabIndex = 3;
+            this.panelPeriodsContent.Visible = false;
+
+            //
+            // panelPeriodControls
+            //
+            this.panelPeriodControls.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelPeriodControls.Controls.Add(this.btnExportPeriods);
+            this.panelPeriodControls.Controls.Add(this.btnCreatePeriod);
+            this.panelPeriodControls.Controls.Add(this.btnEditPeriod);
+            this.panelPeriodControls.Controls.Add(this.btnDeletePeriod);
+            this.panelPeriodControls.Controls.Add(this.btnOpenPeriod);
+            this.panelPeriodControls.Controls.Add(this.btnClosePeriod);
+            this.panelPeriodControls.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelPeriodControls.Location = new System.Drawing.Point(10, 10);
+            this.panelPeriodControls.Name = "panelPeriodControls";
+            this.panelPeriodControls.Padding = new System.Windows.Forms.Padding(5);
+            this.panelPeriodControls.Size = new System.Drawing.Size(930, 60);
+            this.panelPeriodControls.TabIndex = 0;
+
+            //
+            // btnCreatePeriod
+            //
+            this.btnCreatePeriod.Location = new System.Drawing.Point(10, 10);
+            this.btnCreatePeriod.Name = "btnCreatePeriod";
+            this.btnCreatePeriod.Size = new System.Drawing.Size(120, 35);
+            this.btnCreatePeriod.TabIndex = 0;
+            this.btnCreatePeriod.Text = "Tạo mới";
+            this.btnCreatePeriod.UseVisualStyleBackColor = true;
+            this.btnCreatePeriod.Click += new System.EventHandler(this.btnCreatePeriod_Click);
+
+            //
+            // btnEditPeriod
+            //
+            this.btnEditPeriod.Location = new System.Drawing.Point(140, 10);
+            this.btnEditPeriod.Name = "btnEditPeriod";
+            this.btnEditPeriod.Size = new System.Drawing.Size(120, 35);
+            this.btnEditPeriod.TabIndex = 1;
+            this.btnEditPeriod.Text = "Chỉnh sửa";
+            this.btnEditPeriod.UseVisualStyleBackColor = true;
+            this.btnEditPeriod.Click += new System.EventHandler(this.btnEditPeriod_Click);
+
+            //
+            // btnDeletePeriod
+            //
+            this.btnDeletePeriod.Location = new System.Drawing.Point(270, 10);
+            this.btnDeletePeriod.Name = "btnDeletePeriod";
+            this.btnDeletePeriod.Size = new System.Drawing.Size(120, 35);
+            this.btnDeletePeriod.TabIndex = 2;
+            this.btnDeletePeriod.Text = "Xóa";
+            this.btnDeletePeriod.UseVisualStyleBackColor = true;
+            this.btnDeletePeriod.Click += new System.EventHandler(this.btnDeletePeriod_Click);
+
+            //
+            // btnOpenPeriod
+            //
+            this.btnOpenPeriod.Location = new System.Drawing.Point(400, 10);
+            this.btnOpenPeriod.Name = "btnOpenPeriod";
+            this.btnOpenPeriod.Size = new System.Drawing.Size(120, 35);
+            this.btnOpenPeriod.TabIndex = 3;
+            this.btnOpenPeriod.Text = "Mở kỳ";
+            this.btnOpenPeriod.UseVisualStyleBackColor = true;
+            this.btnOpenPeriod.Click += new System.EventHandler(this.btnOpenPeriod_Click);
+
+            //
+            // btnClosePeriod
+            //
+            this.btnClosePeriod.Location = new System.Drawing.Point(530, 10);
+            this.btnClosePeriod.Name = "btnClosePeriod";
+            this.btnClosePeriod.Size = new System.Drawing.Size(120, 35);
+            this.btnClosePeriod.TabIndex = 4;
+            this.btnClosePeriod.Text = "Đóng kỳ";
+            this.btnClosePeriod.UseVisualStyleBackColor = true;
+            this.btnClosePeriod.Click += new System.EventHandler(this.btnClosePeriod_Click);
+
+            //
+            // btnExportPeriods
+            //
+            this.btnExportPeriods.BackColor = System.Drawing.Color.FromArgb(46, 125, 50);
+            this.btnExportPeriods.ForeColor = System.Drawing.Color.White;
+            this.btnExportPeriods.Location = new System.Drawing.Point(780, 10);
+            this.btnExportPeriods.Name = "btnExportPeriods";
+            this.btnExportPeriods.Size = new System.Drawing.Size(140, 35);
+            this.btnExportPeriods.TabIndex = 5;
+            this.btnExportPeriods.Text = "📊 Xuất Excel";
+            this.btnExportPeriods.UseVisualStyleBackColor = false;
+            this.btnExportPeriods.Click += new System.EventHandler(this.btnExportPeriods_Click);
+
+            //
+            // dgvPeriods
+            //
+            this.dgvPeriods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvPeriods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvPeriods.Location = new System.Drawing.Point(10, 70);
+            this.dgvPeriods.Name = "dgvPeriods";
+            this.dgvPeriods.Size = new System.Drawing.Size(930, 620);
+            this.dgvPeriods.TabIndex = 1;
+
+            //
+            // panelNotificationsContent
+            //
+            this.panelNotificationsContent.BackColor = System.Drawing.Color.White;
+            this.panelNotificationsContent.Controls.Add(this.dgvNotifications);
+            this.panelNotificationsContent.Controls.Add(this.panelNotificationControls);
+            this.panelNotificationsContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelNotificationsContent.Location = new System.Drawing.Point(250, 0);
+            this.panelNotificationsContent.Name = "panelNotificationsContent";
+            this.panelNotificationsContent.Padding = new System.Windows.Forms.Padding(10);
+            this.panelNotificationsContent.Size = new System.Drawing.Size(950, 700);
+            this.panelNotificationsContent.TabIndex = 4;
+            this.panelNotificationsContent.Visible = false;
+
+            //
+            // panelNotificationControls
+            //
+            this.panelNotificationControls.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelNotificationControls.Controls.Add(this.btnCreateNotification);
+            this.panelNotificationControls.Controls.Add(this.btnSendNotification);
+            this.panelNotificationControls.Controls.Add(this.btnDeleteNotification);
+            this.panelNotificationControls.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelNotificationControls.Location = new System.Drawing.Point(10, 10);
+            this.panelNotificationControls.Name = "panelNotificationControls";
+            this.panelNotificationControls.Padding = new System.Windows.Forms.Padding(5);
+            this.panelNotificationControls.Size = new System.Drawing.Size(930, 60);
+            this.panelNotificationControls.TabIndex = 0;
+
+            //
+            // btnCreateNotification
+            //
+            this.btnCreateNotification.Location = new System.Drawing.Point(10, 10);
+            this.btnCreateNotification.Name = "btnCreateNotification";
+            this.btnCreateNotification.Size = new System.Drawing.Size(150, 35);
+            this.btnCreateNotification.TabIndex = 0;
+            this.btnCreateNotification.Text = "Tạo thông báo";
+            this.btnCreateNotification.UseVisualStyleBackColor = true;
+            this.btnCreateNotification.Click += new System.EventHandler(this.btnCreateNotification_Click);
+
+            //
+            // btnSendNotification
+            //
+            this.btnSendNotification.Location = new System.Drawing.Point(170, 10);
+            this.btnSendNotification.Name = "btnSendNotification";
+            this.btnSendNotification.Size = new System.Drawing.Size(150, 35);
+            this.btnSendNotification.TabIndex = 1;
+            this.btnSendNotification.Text = "Gửi thông báo";
+            this.btnSendNotification.UseVisualStyleBackColor = true;
+            this.btnSendNotification.Click += new System.EventHandler(this.btnSendNotification_Click);
+
+            //
+            // btnDeleteNotification
+            //
+            this.btnDeleteNotification.Location = new System.Drawing.Point(330, 10);
+            this.btnDeleteNotification.Name = "btnDeleteNotification";
+            this.btnDeleteNotification.Size = new System.Drawing.Size(150, 35);
+            this.btnDeleteNotification.TabIndex = 2;
+            this.btnDeleteNotification.Text = "Xóa thông báo";
+            this.btnDeleteNotification.UseVisualStyleBackColor = true;
+            this.btnDeleteNotification.Click += new System.EventHandler(this.btnDeleteNotification_Click);
+
+            //
+            // dgvNotifications
+            //
+            this.dgvNotifications.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvNotifications.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvNotifications.Location = new System.Drawing.Point(10, 70);
+            this.dgvNotifications.Name = "dgvNotifications";
+            this.dgvNotifications.Size = new System.Drawing.Size(930, 620);
+            this.dgvNotifications.TabIndex = 1;
+
+            //
             // panelLogsContent
             //
             this.panelLogsContent.BackColor = System.Drawing.Color.White;
             this.panelLogsContent.Controls.Add(this.lvLogs);
+            this.panelLogsContent.Controls.Add(this.panelLogControls);
             this.panelLogsContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelLogsContent.Location = new System.Drawing.Point(250, 0);
             this.panelLogsContent.Name = "panelLogsContent";
             this.panelLogsContent.Padding = new System.Windows.Forms.Padding(10);
             this.panelLogsContent.Size = new System.Drawing.Size(950, 700);
-            this.panelLogsContent.TabIndex = 3;
+            this.panelLogsContent.TabIndex = 5;
             this.panelLogsContent.Visible = false;
+
+            //
+            // panelLogControls
+            //
+            this.panelLogControls.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelLogControls.Controls.Add(this.btnExportLogs);
+            this.panelLogControls.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelLogControls.Location = new System.Drawing.Point(10, 10);
+            this.panelLogControls.Name = "panelLogControls";
+            this.panelLogControls.Padding = new System.Windows.Forms.Padding(5);
+            this.panelLogControls.Size = new System.Drawing.Size(930, 60);
+            this.panelLogControls.TabIndex = 0;
+
+            //
+            // btnExportLogs
+            //
+            this.btnExportLogs.BackColor = System.Drawing.Color.FromArgb(46, 125, 50);
+            this.btnExportLogs.ForeColor = System.Drawing.Color.White;
+            this.btnExportLogs.Location = new System.Drawing.Point(780, 10);
+            this.btnExportLogs.Name = "btnExportLogs";
+            this.btnExportLogs.Size = new System.Drawing.Size(140, 35);
+            this.btnExportLogs.TabIndex = 0;
+            this.btnExportLogs.Text = "📊 Xuất Excel";
+            this.btnExportLogs.UseVisualStyleBackColor = false;
+            this.btnExportLogs.Click += new System.EventHandler(this.btnExportLogs_Click);
 
             //
             // lvLogs
@@ -648,6 +939,8 @@ namespace MyWinFormsApp.Forms
             this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.panelStatsContent);
             this.Controls.Add(this.panelLogsContent);
+            this.Controls.Add(this.panelNotificationsContent);
+            this.Controls.Add(this.panelPeriodsContent);
             this.Controls.Add(this.panelTopicsContent);
             this.Controls.Add(this.panelUsersContent);
             this.Controls.Add(this.panelSidebar);
@@ -682,6 +975,8 @@ namespace MyWinFormsApp.Forms
         private System.Windows.Forms.Panel panelSidebar;
         private System.Windows.Forms.Button btnMenuUsers;
         private System.Windows.Forms.Button btnMenuTopics;
+        private System.Windows.Forms.Button btnMenuPeriods;
+        private System.Windows.Forms.Button btnMenuNotifications;
         private System.Windows.Forms.Button btnMenuLogs;
         private System.Windows.Forms.Button btnMenuStats;
         private System.Windows.Forms.Label lblAppTitle;
@@ -689,6 +984,8 @@ namespace MyWinFormsApp.Forms
         // Content Panels
         private System.Windows.Forms.Panel panelUsersContent;
         private System.Windows.Forms.Panel panelTopicsContent;
+        private System.Windows.Forms.Panel panelPeriodsContent;
+        private System.Windows.Forms.Panel panelNotificationsContent;
         private System.Windows.Forms.Panel panelLogsContent;
         private System.Windows.Forms.Panel panelStatsContent;
 
@@ -710,6 +1007,7 @@ namespace MyWinFormsApp.Forms
         private System.Windows.Forms.Button btnCreateUser;
         private System.Windows.Forms.Button btnEditUser;
         private System.Windows.Forms.Button btnDeleteUser;
+        private System.Windows.Forms.Button btnExportUsers;
         private System.Windows.Forms.Panel panelUserButtons;
         private System.Windows.Forms.ContextMenuStrip contextMenuUser;
         private System.Windows.Forms.ToolStripMenuItem resetPasswordToolStripMenuItem;
@@ -720,11 +1018,31 @@ namespace MyWinFormsApp.Forms
         private System.Windows.Forms.Button btnEditTopic;
         private System.Windows.Forms.Button btnApproveTopic;
         private System.Windows.Forms.Button btnRejectTopic;
+        private System.Windows.Forms.Button btnExportTopics;
         private System.Windows.Forms.ComboBox cboTopicStatus;
         private System.Windows.Forms.Panel panelTopicControls;
 
+        // Internship Periods
+        private System.Windows.Forms.DataGridView dgvPeriods;
+        private System.Windows.Forms.Button btnCreatePeriod;
+        private System.Windows.Forms.Button btnEditPeriod;
+        private System.Windows.Forms.Button btnDeletePeriod;
+        private System.Windows.Forms.Button btnOpenPeriod;
+        private System.Windows.Forms.Button btnClosePeriod;
+        private System.Windows.Forms.Button btnExportPeriods;
+        private System.Windows.Forms.Panel panelPeriodControls;
+
+        // Notifications
+        private System.Windows.Forms.DataGridView dgvNotifications;
+        private System.Windows.Forms.Button btnCreateNotification;
+        private System.Windows.Forms.Button btnSendNotification;
+        private System.Windows.Forms.Button btnDeleteNotification;
+        private System.Windows.Forms.Panel panelNotificationControls;
+
         // Logs
         private System.Windows.Forms.ListView lvLogs;
+        private System.Windows.Forms.Panel panelLogControls;
+        private System.Windows.Forms.Button btnExportLogs;
 
         // Statistics
         private System.Windows.Forms.DataVisualization.Charting.Chart chartStudentsByCompany;

@@ -1,5 +1,6 @@
 using MyWinFormsApp.Business.Services;
 using MyWinFormsApp.MockData;
+using MyWinFormsApp.UI.Forms;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -81,9 +82,9 @@ namespace MyWinFormsApp.Forms
                             MessageBoxIcon.Information
                         );
 
-                        // TODO: Mở form chính tương ứng với role
-                        // Ví dụ: if (user.Role == "student") { new StudentForm().Show(); }
-                        
+                        // Mở form tương ứng với role
+                        OpenFormByRole(user.Role, user.Token);
+
                         this.Hide(); // Ẩn form login
                     }
                     else
@@ -110,8 +111,9 @@ namespace MyWinFormsApp.Forms
                             MessageBoxIcon.Information
                         );
 
-                        // TODO: Mở form chính tương ứng với role
-                        
+                        // Mở form tương ứng với role
+                        OpenFormByRole(user.Role, user.Token);
+
                         this.Hide(); // Ẩn form login
                     }
                     else
@@ -150,6 +152,58 @@ namespace MyWinFormsApp.Forms
             if (e.KeyChar == (char)Keys.Enter)
             {
                 btnLogin_Click(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Mở form tương ứng với role của user
+        /// </summary>
+        /// <param name="role">Role của user (admin, student, lecturer, company)</param>
+        /// <param name="token">JWT token (nếu có)</param>
+        private void OpenFormByRole(string role, string? token)
+        {
+            Form? formToOpen = null;
+
+            switch (role.ToLower())
+            {
+                case "admin":
+                    formToOpen = new AdminForm();
+                    break;
+
+                case "student":
+                    formToOpen = new StudentForm();
+                    break;
+
+                case "lecturer":
+                case "teacher":
+                    formToOpen = new TeacherForm();
+                    break;
+
+                case "company":
+                    formToOpen = new CompanyForm();
+                    break;
+
+                default:
+                    MessageBox.Show(
+                        $"Role '{role}' không được hỗ trợ",
+                        "Lỗi",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+            }
+
+            if (formToOpen != null)
+            {
+                // Đăng ký sự kiện khi form đóng thì hiện lại LoginForm
+                formToOpen.FormClosed += (s, e) =>
+                {
+                    this.Show();
+                    txtPassword.Clear();
+                    txtEmail.Focus();
+                };
+
+                formToOpen.Show();
             }
         }
     }

@@ -23,6 +23,12 @@ namespace MyWinFormsApp.Business.Models
         public DateTime? EndDate { get; set; }
         public DateTime? Deadline { get; set; }
         public string? RejectionReason { get; set; }
+
+        // Company-specific fields
+        public string Duration { get; set; } = string.Empty; // Thời gian (VD: 3 tháng)
+        public string Location { get; set; } = string.Empty; // Địa điểm thực tập
+        public string Supervisor { get; set; } = string.Empty; // Người hướng dẫn DN
+
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

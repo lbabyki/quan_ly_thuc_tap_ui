@@ -17,10 +17,13 @@ static class Program
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
 
-        // TEST: Chạy AdminForm trực tiếp để test
-        Application.Run(new AdminForm());
+        // Khởi động ứng dụng từ LoginForm
+        Application.Run(new LoginForm());
 
-        // Hoặc chạy LoginForm như bình thường
-        // Application.Run(new LoginForm());
+        // TEST: Chạy form trực tiếp để test (bỏ comment dòng cần test)
+        // Application.Run(new AdminForm());
+        // Application.Run(new StudentForm());
+        // Application.Run(new TeacherForm());
+        // Application.Run(new CompanyForm());
     }
 }

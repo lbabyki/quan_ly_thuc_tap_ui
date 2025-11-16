@@ -133,6 +133,77 @@ namespace MyWinFormsApp.MockData
             return (true, "Từ chối đề tài thành công", topic);
         }
 
+        public static (bool Success, string Message, InternshipTopic? Topic) CreateTopic(InternshipTopic topic)
+        {
+            // Validate
+            if (string.IsNullOrWhiteSpace(topic.Title))
+            {
+                return (false, "Tiêu đề không được để trống", null);
+            }
+
+            if (string.IsNullOrWhiteSpace(topic.Description))
+            {
+                return (false, "Mô tả không được để trống", null);
+            }
+
+            if (topic.MaxStudents <= 0)
+            {
+                return (false, "Số lượng sinh viên phải lớn hơn 0", null);
+            }
+
+            // Create new topic
+            topic.Id = Guid.NewGuid().ToString();
+            topic.Status = "pending";
+            topic.CurrentStudents = 0;
+            topic.CreatedAt = DateTime.Now;
+            topic.UpdatedAt = DateTime.Now;
+
+            _topics.Add(topic);
+
+            return (true, "Tạo đề tài thành công", topic);
+        }
+
+        public static (bool Success, string Message, InternshipTopic? Topic) UpdateTopic(string topicId, InternshipTopic topic)
+        {
+            var existingTopic = _topics.FirstOrDefault(t => t.Id == topicId);
+            if (existingTopic == null)
+            {
+                return (false, "Không tìm thấy đề tài", null);
+            }
+
+            // Validate
+            if (string.IsNullOrWhiteSpace(topic.Title))
+            {
+                return (false, "Tiêu đề không được để trống", null);
+            }
+
+            if (string.IsNullOrWhiteSpace(topic.Description))
+            {
+                return (false, "Mô tả không được để trống", null);
+            }
+
+            if (topic.MaxStudents <= 0)
+            {
+                return (false, "Số lượng sinh viên phải lớn hơn 0", null);
+            }
+
+            // Update fields
+            existingTopic.Title = topic.Title;
+            existingTopic.Description = topic.Description;
+            existingTopic.CompanyId = topic.CompanyId;
+            existingTopic.CompanyName = topic.CompanyName;
+            existingTopic.Requirements = topic.Requirements;
+            existingTopic.Skills = topic.Skills;
+            existingTopic.MaxStudents = topic.MaxStudents;
+            existingTopic.StartDate = topic.StartDate;
+            existingTopic.EndDate = topic.EndDate;
+            existingTopic.Deadline = topic.Deadline;
+            existingTopic.Status = topic.Status;
+            existingTopic.UpdatedAt = DateTime.Now;
+
+            return (true, "Cập nhật đề tài thành công", existingTopic);
+        }
+
         #endregion
 
         #region System Logs
