@@ -349,7 +349,7 @@ namespace MyWinFormsApp.MockData
                     CompanyName = "Công ty FPT Software",
                     LecturerId = "lecturer001",
                     LecturerName = "TS. Phạm Văn Giảng Viên",
-                    Status = "pending",
+                    Status = "approved",
                     MaxStudents = 2,
                     CurrentStudents = 0,
                     Requirements = "Có kiến thức về JavaScript, React",
@@ -387,7 +387,7 @@ namespace MyWinFormsApp.MockData
                     CompanyName = "Công ty VNG Corporation",
                     LecturerId = "lecturer001",
                     LecturerName = "TS. Phạm Văn Giảng Viên",
-                    Status = "pending",
+                    Status = "approved",
                     MaxStudents = 2,
                     CurrentStudents = 0,
                     Requirements = "Có kiến thức về Unity, C#",
@@ -411,6 +411,63 @@ namespace MyWinFormsApp.MockData
                     Skills = "Python, NLP, Machine Learning",
                     RejectionReason = "Yêu cầu kỹ năng quá cao cho sinh viên thực tập",
                     CreatedAt = DateTime.Now.AddDays(-15)
+                },
+                new InternshipTopic
+                {
+                    Id = "topic005",
+                    Title = "Xây dựng hệ thống E-commerce",
+                    Description = "Phát triển website thương mại điện tử với đầy đủ tính năng giỏ hàng, thanh toán, quản lý đơn hàng",
+                    CompanyId = "company001",
+                    CompanyName = "Công ty TNHH ABC",
+                    LecturerId = "lecturer002",
+                    LecturerName = "ThS. Trần Văn C",
+                    Status = "approved",
+                    MaxStudents = 3,
+                    CurrentStudents = 1,
+                    Requirements = "Có kiến thức về ASP.NET Core, SQL Server",
+                    Skills = "C#, ASP.NET Core, Entity Framework, SQL Server",
+                    StartDate = DateTime.Now.AddDays(15),
+                    EndDate = DateTime.Now.AddDays(105),
+                    Deadline = DateTime.Now.AddDays(7),
+                    CreatedAt = DateTime.Now.AddDays(-12)
+                },
+                new InternshipTopic
+                {
+                    Id = "topic006",
+                    Title = "Phát triển ứng dụng quản lý nhân sự",
+                    Description = "Xây dựng hệ thống quản lý nhân sự, chấm công, tính lương",
+                    CompanyId = "company003",
+                    CompanyName = "Công ty VNG Corporation",
+                    LecturerId = "lecturer001",
+                    LecturerName = "TS. Phạm Văn Giảng Viên",
+                    Status = "approved",
+                    MaxStudents = 2,
+                    CurrentStudents = 0,
+                    Requirements = "Có kiến thức về Java, Spring Boot",
+                    Skills = "Java, Spring Boot, MySQL, REST API",
+                    StartDate = DateTime.Now.AddDays(20),
+                    EndDate = DateTime.Now.AddDays(110),
+                    Deadline = DateTime.Now.AddDays(8),
+                    CreatedAt = DateTime.Now.AddDays(-8)
+                },
+                new InternshipTopic
+                {
+                    Id = "topic007",
+                    Title = "Xây dựng hệ thống IoT giám sát môi trường",
+                    Description = "Phát triển hệ thống IoT thu thập và giám sát dữ liệu môi trường (nhiệt độ, độ ẩm, chất lượng không khí)",
+                    CompanyId = "company002",
+                    CompanyName = "Công ty FPT Software",
+                    LecturerId = "lecturer002",
+                    LecturerName = "ThS. Trần Văn C",
+                    Status = "approved",
+                    MaxStudents = 2,
+                    CurrentStudents = 0,
+                    Requirements = "Có kiến thức về Arduino/Raspberry Pi, Python",
+                    Skills = "IoT, Python, Arduino, MQTT, Database",
+                    StartDate = DateTime.Now.AddDays(35),
+                    EndDate = DateTime.Now.AddDays(125),
+                    Deadline = DateTime.Now.AddDays(20),
+                    CreatedAt = DateTime.Now.AddDays(-6)
                 }
             };
         }

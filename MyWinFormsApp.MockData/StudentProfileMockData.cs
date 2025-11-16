@@ -34,14 +34,43 @@ namespace MyWinFormsApp.MockData
                 Id = "REG001",
                 StudentId = "SV001",
                 StudentName = "Nguyễn Văn An",
-                TopicId = "TOPIC001",
-                TopicTitle = "Xây dựng hệ thống quản lý bán hàng",
-                CompanyId = "COMP001",
-                CompanyName = "Công ty ABC",
+                TopicId = "topic002",
+                TopicTitle = "Xây dựng hệ thống quản lý kho",
+                CompanyId = "company001",
+                CompanyName = "Công ty TNHH ABC",
                 CoverLetterUrl = null,
                 Status = "approved",
                 RegisteredAt = DateTime.Now.AddMonths(-2),
                 ApprovedAt = DateTime.Now.AddMonths(-2).AddDays(3)
+            },
+            new InternshipRegistration
+            {
+                Id = "REG002",
+                StudentId = "SV001",
+                StudentName = "Nguyễn Văn An",
+                TopicId = "topic001",
+                TopicTitle = "Phát triển ứng dụng Mobile với React Native",
+                CompanyId = "company002",
+                CompanyName = "Công ty FPT Software",
+                CoverLetterUrl = null,
+                Status = "pending",
+                RegisteredAt = DateTime.Now.AddDays(-5),
+                ApprovedAt = null
+            },
+            new InternshipRegistration
+            {
+                Id = "REG003",
+                StudentId = "SV001",
+                StudentName = "Nguyễn Văn An",
+                TopicId = "topic005",
+                TopicTitle = "Xây dựng hệ thống E-commerce",
+                CompanyId = "company001",
+                CompanyName = "Công ty TNHH ABC",
+                CoverLetterUrl = null,
+                Status = "rejected",
+                RegisteredAt = DateTime.Now.AddDays(-15),
+                ApprovedAt = null,
+                RejectionReason = "Sinh viên chưa đủ kinh nghiệm về ASP.NET Core"
             }
         };
 
