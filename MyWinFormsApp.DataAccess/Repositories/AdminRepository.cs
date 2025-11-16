@@ -286,6 +286,84 @@ namespace MyWinFormsApp.DataAccess.Repositories
         }
 
         /// <summary>
+        /// Tạo đề tài mới
+        /// </summary>
+        public async Task<ApiResponse<InternshipTopicDto>> CreateTopicAsync(InternshipTopicDto topic)
+        {
+            try
+            {
+                var client = ApiClient.CreateClient();
+                var request = ApiClient.CreateRequest("/v1/api/admin/topics", Method.Post);
+                request.AddJsonBody(topic);
+
+                var response = await client.ExecuteAsync(request);
+
+                if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+                {
+                    return JsonConvert.DeserializeObject<ApiResponse<InternshipTopicDto>>(response.Content)
+                        ?? new ApiResponse<InternshipTopicDto> { Success = false, Message = "Failed to parse response" };
+                }
+                else
+                {
+                    return new ApiResponse<InternshipTopicDto>
+                    {
+                        Success = false,
+                        Message = $"Error: {response.StatusCode}",
+                        Error = response.ErrorMessage
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<InternshipTopicDto>
+                {
+                    Success = false,
+                    Message = "An error occurred",
+                    Error = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật đề tài
+        /// </summary>
+        public async Task<ApiResponse<InternshipTopicDto>> UpdateTopicAsync(string topicId, InternshipTopicDto topic)
+        {
+            try
+            {
+                var client = ApiClient.CreateClient();
+                var request = ApiClient.CreateRequest($"/v1/api/admin/topics/{topicId}", Method.Put);
+                request.AddJsonBody(topic);
+
+                var response = await client.ExecuteAsync(request);
+
+                if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+                {
+                    return JsonConvert.DeserializeObject<ApiResponse<InternshipTopicDto>>(response.Content)
+                        ?? new ApiResponse<InternshipTopicDto> { Success = false, Message = "Failed to parse response" };
+                }
+                else
+                {
+                    return new ApiResponse<InternshipTopicDto>
+                    {
+                        Success = false,
+                        Message = $"Error: {response.StatusCode}",
+                        Error = response.ErrorMessage
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<InternshipTopicDto>
+                {
+                    Success = false,
+                    Message = "An error occurred",
+                    Error = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
         /// Duyệt đề tài thực tập
         /// </summary>
         public async Task<ApiResponse<InternshipTopicDto>> ApproveTopicAsync(string topicId)

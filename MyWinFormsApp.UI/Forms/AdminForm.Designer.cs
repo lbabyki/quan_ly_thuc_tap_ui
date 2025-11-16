@@ -51,6 +51,8 @@ namespace MyWinFormsApp.Forms
             this.btnCreateUser = new System.Windows.Forms.Button();
             this.btnEditUser = new System.Windows.Forms.Button();
             this.btnDeleteUser = new System.Windows.Forms.Button();
+            this.btnCreateTopic = new System.Windows.Forms.Button();
+            this.btnEditTopic = new System.Windows.Forms.Button();
             this.btnApproveTopic = new System.Windows.Forms.Button();
             this.btnRejectTopic = new System.Windows.Forms.Button();
             
@@ -375,6 +377,8 @@ namespace MyWinFormsApp.Forms
             //
             this.panelTopicControls.BackColor = System.Drawing.Color.WhiteSmoke;
             this.panelTopicControls.Controls.Add(this.cboTopicStatus);
+            this.panelTopicControls.Controls.Add(this.btnCreateTopic);
+            this.panelTopicControls.Controls.Add(this.btnEditTopic);
             this.panelTopicControls.Controls.Add(this.btnApproveTopic);
             this.panelTopicControls.Controls.Add(this.btnRejectTopic);
             this.panelTopicControls.Dock = System.Windows.Forms.DockStyle.Top;
@@ -404,12 +408,34 @@ namespace MyWinFormsApp.Forms
             this.cboTopicStatus.SelectedIndexChanged += new System.EventHandler(this.cboTopicStatus_SelectedIndexChanged);
 
             //
+            // btnCreateTopic
+            //
+            this.btnCreateTopic.Location = new System.Drawing.Point(180, 10);
+            this.btnCreateTopic.Name = "btnCreateTopic";
+            this.btnCreateTopic.Size = new System.Drawing.Size(120, 35);
+            this.btnCreateTopic.TabIndex = 1;
+            this.btnCreateTopic.Text = "Tạo mới";
+            this.btnCreateTopic.UseVisualStyleBackColor = true;
+            this.btnCreateTopic.Click += new System.EventHandler(this.btnCreateTopic_Click);
+
+            //
+            // btnEditTopic
+            //
+            this.btnEditTopic.Location = new System.Drawing.Point(310, 10);
+            this.btnEditTopic.Name = "btnEditTopic";
+            this.btnEditTopic.Size = new System.Drawing.Size(120, 35);
+            this.btnEditTopic.TabIndex = 2;
+            this.btnEditTopic.Text = "Chỉnh sửa";
+            this.btnEditTopic.UseVisualStyleBackColor = true;
+            this.btnEditTopic.Click += new System.EventHandler(this.btnEditTopic_Click);
+
+            //
             // btnApproveTopic
             //
-            this.btnApproveTopic.Location = new System.Drawing.Point(180, 10);
+            this.btnApproveTopic.Location = new System.Drawing.Point(440, 10);
             this.btnApproveTopic.Name = "btnApproveTopic";
             this.btnApproveTopic.Size = new System.Drawing.Size(120, 35);
-            this.btnApproveTopic.TabIndex = 1;
+            this.btnApproveTopic.TabIndex = 3;
             this.btnApproveTopic.Text = "Duyệt";
             this.btnApproveTopic.UseVisualStyleBackColor = true;
             this.btnApproveTopic.Click += new System.EventHandler(this.btnApproveTopic_Click);
@@ -417,10 +443,10 @@ namespace MyWinFormsApp.Forms
             //
             // btnRejectTopic
             //
-            this.btnRejectTopic.Location = new System.Drawing.Point(310, 10);
+            this.btnRejectTopic.Location = new System.Drawing.Point(570, 10);
             this.btnRejectTopic.Name = "btnRejectTopic";
             this.btnRejectTopic.Size = new System.Drawing.Size(120, 35);
-            this.btnRejectTopic.TabIndex = 2;
+            this.btnRejectTopic.TabIndex = 4;
             this.btnRejectTopic.Text = "Từ chối";
             this.btnRejectTopic.UseVisualStyleBackColor = true;
             this.btnRejectTopic.Click += new System.EventHandler(this.btnRejectTopic_Click);
@@ -690,6 +716,8 @@ namespace MyWinFormsApp.Forms
 
         // Topics
         private System.Windows.Forms.DataGridView dgvTopics;
+        private System.Windows.Forms.Button btnCreateTopic;
+        private System.Windows.Forms.Button btnEditTopic;
         private System.Windows.Forms.Button btnApproveTopic;
         private System.Windows.Forms.Button btnRejectTopic;
         private System.Windows.Forms.ComboBox cboTopicStatus;

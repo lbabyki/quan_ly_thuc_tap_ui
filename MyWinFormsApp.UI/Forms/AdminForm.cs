@@ -285,73 +285,158 @@ namespace MyWinFormsApp.Forms
             dgvCompanies.DataSource = _currentUsers.Where(u => u.Role == "company").ToList();
         }
 
-        private void btnCreateUser_Click(object sender, EventArgs e)
+        private async void btnCreateUser_Click(object sender, EventArgs e)
         {
-            // TODO: Open dialog to create user
-            MessageBox.Show("Chức năng tạo người dùng sẽ được implement", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Determine current role based on selected tab
+            string role = "student";
+            if (tabControlUsers.SelectedTab == tabLecturers) role = "lecturer";
+            else if (tabControlUsers.SelectedTab == tabCompanies) role = "company";
+
+            var dialog = new UserDialog(role);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // TODO: Call API to create user - need to implement proper mapping
+                    MessageBox.Show("Chức năng tạo người dùng đang được phát triển!", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // await LoadUsersAsync(); // Reload data
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
-        private void btnEditUser_Click(object sender, EventArgs e)
+        private async void btnEditUser_Click(object sender, EventArgs e)
         {
-            // TODO: Open dialog to edit user
-            MessageBox.Show("Chức năng sửa người dùng sẽ được implement", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Get selected user
+            var currentTab = tabControlUsers.SelectedTab;
+            DataGridView? currentDgv = null;
+            string role = "student";
+
+            if (currentTab == tabStudents)
+            {
+                currentDgv = dgvStudents;
+                role = "student";
+            }
+            else if (currentTab == tabLecturers)
+            {
+                currentDgv = dgvLecturers;
+                role = "lecturer";
+            }
+            else if (currentTab == tabCompanies)
+            {
+                currentDgv = dgvCompanies;
+                role = "company";
+            }
+
+            if (currentDgv == null || currentDgv.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn người dùng cần sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedUser = currentDgv.SelectedRows[0].DataBoundItem;
+
+            var dialog = new UserDialog(role, selectedUser);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // TODO: Call API to update user - need to implement proper mapping
+                    MessageBox.Show("Chức năng sửa người dùng đang được phát triển!", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // await LoadUsersAsync(); // Reload data
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private async void btnDeleteUser_Click(object sender, EventArgs e)
         {
-            var currentTab = tabControl1.SelectedTab;
+            var currentTab = tabControlUsers.SelectedTab;
             DataGridView? currentDgv = null;
+            string? userId = null;
+            string? userName = null;
 
-            if (currentTab == tabStudents) currentDgv = dgvStudents;
-            else if (currentTab == tabLecturers) currentDgv = dgvLecturers;
-            else if (currentTab == tabCompanies) currentDgv = dgvCompanies;
+            if (currentTab == tabStudents)
+            {
+                currentDgv = dgvStudents;
+                if (currentDgv.SelectedRows.Count > 0)
+                {
+                    var student = currentDgv.SelectedRows[0].DataBoundItem as Student;
+                    userId = student?.Id;
+                    userName = student?.FullName;
+                }
+            }
+            else if (currentTab == tabLecturers)
+            {
+                currentDgv = dgvLecturers;
+                if (currentDgv.SelectedRows.Count > 0)
+                {
+                    var lecturer = currentDgv.SelectedRows[0].DataBoundItem as Lecturer;
+                    userId = lecturer?.Id;
+                    userName = lecturer?.FullName;
+                }
+            }
+            else if (currentTab == tabCompanies)
+            {
+                currentDgv = dgvCompanies;
+                if (currentDgv.SelectedRows.Count > 0)
+                {
+                    var company = currentDgv.SelectedRows[0].DataBoundItem as Company;
+                    userId = company?.Id;
+                    userName = company?.CompanyName;
+                }
+            }
 
             if (currentDgv == null || currentDgv.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn người dùng cần xóa", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn người dùng cần xóa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var user = currentDgv.SelectedRows[0].DataBoundItem as User;
-            if (user == null) return;
+            if (string.IsNullOrEmpty(userId))
+            {
+                MessageBox.Show("Không tìm thấy ID người dùng!", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            var result = MessageBox.Show($"Bạn có chắc muốn xóa người dùng '{user.FullName}'?",
-                "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show($"Bạn có chắc muốn xóa '{userName}'?\n\nHành động này không thể hoàn tác!",
+                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
             {
                 try
                 {
-                    if (_useMockData)
+                    var (success, message) = await _adminService.DeleteUserAsync(userId);
+
+                    if (success)
                     {
-                        var (success, message) = AdminMockData.DeleteUser(user.UserId ?? "");
-                        if (success)
-                        {
-                            MessageBox.Show(message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            await LoadUsers();
-                        }
-                        else
-                        {
-                            MessageBox.Show(message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LoadUsers(); // Reload data
                     }
                     else
                     {
-                        var (success, message) = await _adminService.DeleteUserAsync(user.UserId ?? "");
-                        if (success)
-                        {
-                            MessageBox.Show(message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            await LoadUsers();
-                        }
-                        else
-                        {
-                            MessageBox.Show(message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        MessageBox.Show(message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -424,6 +509,83 @@ namespace MyWinFormsApp.Forms
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnCreateTopic_Click(object sender, EventArgs e)
+        {
+            var dialog = new TopicDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // Call API to create topic
+                    var (success, message, topic) = await _adminService.CreateTopicAsync(dialog.TopicData!);
+
+                    if (success)
+                    {
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LoadTopics(); // Reload data
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void btnEditTopic_Click(object sender, EventArgs e)
+        {
+            if (dgvTopics.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn đề tài cần sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedTopic = dgvTopics.SelectedRows[0].DataBoundItem as InternshipTopic;
+            if (selectedTopic == null) return;
+
+            var dialog = new TopicDialog(selectedTopic);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(selectedTopic.Id))
+                    {
+                        MessageBox.Show("Không tìm thấy ID đề tài!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Call API to update topic
+                    var (success, message, topic) = await _adminService.UpdateTopicAsync(selectedTopic.Id, dialog.TopicData!);
+
+                    if (success)
+                    {
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LoadTopics(); // Reload data
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 

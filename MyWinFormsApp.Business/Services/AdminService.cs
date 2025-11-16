@@ -260,6 +260,80 @@ namespace MyWinFormsApp.Business.Services
         }
 
         /// <summary>
+        /// Tạo đề tài mới
+        /// </summary>
+        public async Task<(bool Success, string Message, InternshipTopic? Topic)> CreateTopicAsync(InternshipTopic topic)
+        {
+            // Validate input
+            if (string.IsNullOrWhiteSpace(topic.Title))
+            {
+                return (false, "Tiêu đề không được để trống", null);
+            }
+
+            if (string.IsNullOrWhiteSpace(topic.Description))
+            {
+                return (false, "Mô tả không được để trống", null);
+            }
+
+            try
+            {
+                var topicDto = MapTopicToDto(topic);
+                var response = await _repository.CreateTopicAsync(topicDto);
+
+                if (response.Success && response.Data != null)
+                {
+                    var createdTopic = MapDtoToTopic(response.Data);
+                    return (true, "Tạo đề tài thành công", createdTopic);
+                }
+                else
+                {
+                    return (false, response.Message ?? "Failed to create topic", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}", null);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật đề tài
+        /// </summary>
+        public async Task<(bool Success, string Message, InternshipTopic? Topic)> UpdateTopicAsync(string topicId, InternshipTopic topic)
+        {
+            // Validate input
+            if (string.IsNullOrWhiteSpace(topicId))
+            {
+                return (false, "Topic ID không được để trống", null);
+            }
+
+            if (string.IsNullOrWhiteSpace(topic.Title))
+            {
+                return (false, "Tiêu đề không được để trống", null);
+            }
+
+            try
+            {
+                var topicDto = MapTopicToDto(topic);
+                var response = await _repository.UpdateTopicAsync(topicId, topicDto);
+
+                if (response.Success && response.Data != null)
+                {
+                    var updatedTopic = MapDtoToTopic(response.Data);
+                    return (true, "Cập nhật đề tài thành công", updatedTopic);
+                }
+                else
+                {
+                    return (false, response.Message ?? "Failed to update topic", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}", null);
+            }
+        }
+
+        /// <summary>
         /// Duyệt đề tài thực tập
         /// </summary>
         public async Task<(bool Success, string Message, InternshipTopic? Topic)> ApproveTopicAsync(string topicId)
@@ -426,6 +500,31 @@ namespace MyWinFormsApp.Business.Services
                 RejectionReason = dto.RejectionReason,
                 CreatedAt = dto.CreatedAt ?? DateTime.Now,
                 UpdatedAt = dto.UpdatedAt
+            };
+        }
+
+        private InternshipTopicDto MapTopicToDto(InternshipTopic topic)
+        {
+            return new InternshipTopicDto
+            {
+                Id = topic.Id,
+                Title = topic.Title,
+                Description = topic.Description,
+                CompanyId = topic.CompanyId,
+                CompanyName = topic.CompanyName,
+                LecturerId = topic.LecturerId,
+                LecturerName = topic.LecturerName,
+                Status = topic.Status,
+                MaxStudents = topic.MaxStudents,
+                CurrentStudents = topic.CurrentStudents,
+                Requirements = topic.Requirements,
+                Skills = topic.Skills,
+                StartDate = topic.StartDate,
+                EndDate = topic.EndDate,
+                Deadline = topic.Deadline,
+                RejectionReason = topic.RejectionReason,
+                CreatedAt = topic.CreatedAt,
+                UpdatedAt = topic.UpdatedAt
             };
         }
 
