@@ -2,7 +2,7 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWinFormsApp", "MyWinFormsApp\MyWinFormsApp.csproj", "{50028CD7-4DFC-33F6-776D-039E57E71A5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWinFormsApp", "MyWinFormsApp.UI\MyWinFormsApp.csproj", "{50028CD7-4DFC-33F6-776D-039E57E71A5A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWinFormsApp.Business", "MyWinFormsApp.Business\MyWinFormsApp.Business.csproj", "{37C55D75-A326-4678-9EA8-A0E504574D9B}"
 EndProject

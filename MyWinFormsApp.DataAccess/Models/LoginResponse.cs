@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 
 namespace MyWinFormsApp.DataAccess.Models
 {
@@ -15,7 +16,7 @@ namespace MyWinFormsApp.DataAccess.Models
     }
 
     /// <summary>
-    /// DTO cho User trong Login Response
+    /// DTO cho User trong Login Response và Admin operations
     /// </summary>
     public class UserDto
     {
@@ -24,6 +25,9 @@ namespace MyWinFormsApp.DataAccess.Models
 
         [JsonProperty("email")]
         public string? Email { get; set; }
+
+        [JsonProperty("password")]
+        public string? Password { get; set; }
 
         [JsonProperty("role")]
         public string? Role { get; set; }
@@ -36,6 +40,15 @@ namespace MyWinFormsApp.DataAccess.Models
 
         [JsonProperty("phone")]
         public string? Phone { get; set; }
+
+        [JsonProperty("isActive")]
+        public bool IsActive { get; set; } = true;
+
+        [JsonProperty("createdAt")]
+        public DateTime? CreatedAt { get; set; }
+
+        [JsonProperty("updatedAt")]
+        public DateTime? UpdatedAt { get; set; }
     }
 }
 

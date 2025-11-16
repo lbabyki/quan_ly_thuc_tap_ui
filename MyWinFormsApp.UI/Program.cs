@@ -17,7 +17,10 @@ static class Program
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
 
-        // Khởi chạy LoginForm thay vì Form1
-        Application.Run(new LoginForm());
+        // TEST: Chạy AdminForm trực tiếp để test
+        Application.Run(new AdminForm());
+
+        // Hoặc chạy LoginForm như bình thường
+        // Application.Run(new LoginForm());
     }
 }
